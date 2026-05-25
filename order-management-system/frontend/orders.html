@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMS – Pedidos</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <a class="brand" href="index.html">OMS</a>
+    <a href="index.html">Dashboard</a>
+    <a href="customers.html">Clientes</a>
+    <a href="orders.html" class="active">Pedidos</a>
+</nav>
+<main>
+    <div class="toolbar">
+        <h1>Pedidos</h1>
+        <div style="display:flex;gap:.75rem;align-items:center">
+            <select id="filterStatus" onchange="load()">
+                <option value="">Todos os status</option>
+                <option>PENDING</option>
+                <option>PROCESSING</option>
+                <option>SHIPPED</option>
+                <option>DELIVERED</option>
+                <option>CANCELLED</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal()">+ Novo Pedido</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Cliente</th><th>Data</th><th>Total</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal novo pedido -->
+<div class="modal-backdrop" id="modal">
+    <div class="modal">
+        <h2>Novo Pedido</h2>
+        <div class="form-group">
+            <label>Cliente</label>
+            <select id="customerId"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="createOrder()">Criar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/orders.js"></script>
+</body>
+</html>

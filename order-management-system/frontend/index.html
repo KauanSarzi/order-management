@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMS – Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <a class="brand" href="index.html">OMS</a>
+    <a href="index.html" class="active">Dashboard</a>
+    <a href="customers.html">Clientes</a>
+    <a href="orders.html">Pedidos</a>
+</nav>
+<main>
+    <h1>Dashboard</h1>
+    <div class="cards" id="cards">
+        <div class="card"><div class="label">Total de Pedidos</div><div class="value" id="totalOrders">–</div></div>
+        <div class="card"><div class="label">Total de Clientes</div><div class="value" id="totalCustomers">–</div></div>
+        <div class="card"><div class="label">Ticket Médio</div><div class="value" id="avgAmount">–</div></div>
+        <div class="card"><div class="label">Entregues</div><div class="value" id="delivered">–</div></div>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Quantidade</th>
+                </tr>
+            </thead>
+            <tbody id="statusTable"></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

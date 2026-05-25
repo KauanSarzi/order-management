@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"c:\\\\Aprendendo-Claude-Code\\\\order-management-system\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\oms\\\\controller\")",
+      "Bash(mkdir -p \"c:\\\\Aprendendo-Claude-Code\\\\order-management-system\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\oms\\\\service\")",
+      "Bash(mkdir -p \"c:\\\\Aprendendo-Claude-Code\\\\order-management-system\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\oms\\\\repository\")",
+      "Bash(mkdir -p \"c:\\\\Aprendendo-Claude-Code\\\\order-management-system\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\oms\\\\model\")",
+      "Bash(mkdir -p \"c:\\\\Aprendendo-Claude-Code\\\\order-management-system\\\\backend\\\\src\\\\main\\\\java\\\\com\\\\oms\\\\dto\")"
+    ]
+  }
+}

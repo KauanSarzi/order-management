@@ -1,0 +1,1 @@
+# handler.py uses only stdlib (urllib, json, os) — no extra packages needed

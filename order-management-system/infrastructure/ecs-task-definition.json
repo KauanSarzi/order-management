@@ -1,0 +1,44 @@
+{
+  "family": "oms-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<ACCOUNT_ID>:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "backend",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/oms-backend:latest",
+      "portMappings": [{ "containerPort": 8080, "protocol": "tcp" }],
+      "environment": [
+        { "name": "DB_URL",      "value": "jdbc:postgresql://<RDS_ENDPOINT>:5432/omsdb" },
+        { "name": "DB_USER",     "value": "omsuser" },
+        { "name": "DB_PASSWORD", "value": "<CHANGE_ME>" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/oms-backend",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "essential": true
+    },
+    {
+      "name": "frontend",
+      "image": "<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/oms-frontend:latest",
+      "portMappings": [{ "containerPort": 80, "protocol": "tcp" }],
+      "dependsOn": [{ "containerName": "backend", "condition": "START" }],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/oms-frontend",
+          "awslogs-region": "<REGION>",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "essential": true
+    }
+  ]
+}

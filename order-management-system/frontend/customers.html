@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMS – Clientes</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+    <a class="brand" href="index.html">OMS</a>
+    <a href="index.html">Dashboard</a>
+    <a href="customers.html" class="active">Clientes</a>
+    <a href="orders.html">Pedidos</a>
+</nav>
+<main>
+    <div class="toolbar">
+        <h1>Clientes</h1>
+        <button class="btn btn-primary" onclick="openModal()">+ Novo Cliente</button>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal">
+    <div class="modal">
+        <h2 id="modalTitle">Novo Cliente</h2>
+        <div class="form-group"><label>Nome</label><input id="name" placeholder="Nome completo"></div>
+        <div class="form-group"><label>E-mail</label><input id="email" type="email" placeholder="email@exemplo.com"></div>
+        <div class="form-group"><label>Telefone</label><input id="phone" placeholder="(11) 99999-9999"></div>
+        <div class="form-group"><label>Endereço</label><input id="address" placeholder="Rua, número, cidade"></div>
+        <div class="modal-actions">
+            <button class="btn" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="save()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/api.js"></script>
+<script src="js/customers.js"></script>
+</body>
+</html>

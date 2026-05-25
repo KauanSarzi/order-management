@@ -1,0 +1,134 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+}
+
+nav {
+    background: #1a1a2e;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 56px;
+}
+nav .brand { color: #fff; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+nav a { color: #a0aec0; text-decoration: none; font-size: .9rem; }
+nav a:hover, nav a.active { color: #fff; }
+
+main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+h1 { font-size: 1.4rem; margin-bottom: 1.5rem; }
+h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+}
+.card .label { font-size: .8rem; color: #718096; margin-bottom: .4rem; }
+.card .value { font-size: 2rem; font-weight: 700; color: #1a1a2e; }
+
+/* Table */
+.table-wrap { background: #fff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.07); overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: .75rem 1rem; text-align: left; font-size: .9rem; }
+th { background: #f7fafc; font-weight: 600; color: #4a5568; border-bottom: 1px solid #e2e8f0; }
+tr:not(:last-child) td { border-bottom: 1px solid #edf2f7; }
+tr:hover td { background: #f7fafc; }
+
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: .2rem .6rem;
+    border-radius: 20px;
+    font-size: .75rem;
+    font-weight: 600;
+}
+.badge-PENDING    { background: #fefcbf; color: #744210; }
+.badge-PROCESSING { background: #bee3f8; color: #2a4365; }
+.badge-SHIPPED    { background: #c6f6d5; color: #22543d; }
+.badge-DELIVERED  { background: #9ae6b4; color: #1c4532; }
+.badge-CANCELLED  { background: #fed7d7; color: #742a2a; }
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: .45rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: .85rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+.btn-primary  { background: #4c6ef5; color: #fff; }
+.btn-primary:hover  { background: #3b5bdb; }
+.btn-danger   { background: #fc8181; color: #fff; }
+.btn-danger:hover   { background: #f56565; }
+.btn-sm { padding: .3rem .7rem; font-size: .78rem; }
+
+/* Toolbar */
+.toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+.toolbar select { padding: .4rem .7rem; border-radius: 6px; border: 1px solid #cbd5e0; font-size: .85rem; }
+
+/* Modal */
+.modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.modal h2 { margin-bottom: 1.25rem; }
+.modal-actions { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.5rem; }
+
+/* Form */
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: .3rem; color: #4a5568; }
+.form-group input, .form-group select {
+    width: 100%;
+    padding: .5rem .75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: .9rem;
+}
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #4c6ef5;
+    box-shadow: 0 0 0 3px rgba(76,110,245,.15);
+}
+
+/* Timeline */
+.timeline { list-style: none; padding: 0; }
+.timeline li { display: flex; align-items: center; gap: .75rem; padding: .5rem 0; font-size: .9rem; }
+.timeline li::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #4c6ef5; flex-shrink: 0; }
+
+/* Toast */
+.toast {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: #2d3748; color: #fff;
+    padding: .75rem 1.25rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    opacity: 0;
+    transition: opacity .3s;
+    z-index: 200;
+}
+.toast.show { opacity: 1; }
+
+.empty { text-align: center; padding: 2.5rem; color: #a0aec0; font-size: .9rem; }
