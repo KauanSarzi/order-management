@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600" font-family="Segoe UI, system-ui, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#718096"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#c05621"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.12)"/>
+    </filter>
+  </defs>
+
+  <!-- Fundo -->
+  <rect width="900" height="600" fill="#f0f2f5" rx="12"/>
+
+  <!-- Título -->
+  <text x="450" y="34" text-anchor="middle" font-size="17" font-weight="700" fill="#1a1a2e">Order Management System — Arquitetura AWS</text>
+
+  <!-- ─── Internet ─── -->
+  <rect x="350" y="50" width="200" height="58" rx="10" fill="#4a5568" filter="url(#shadow)"/>
+  <text x="450" y="75" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">Internet</text>
+  <text x="450" y="93" text-anchor="middle" fill="#cbd5e0" font-size="10">Usuário / Browser</text>
+
+  <!-- Seta Internet → API Gateway -->
+  <line x1="450" y1="108" x2="450" y2="145" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ─── API Gateway ─── -->
+  <rect x="280" y="145" width="340" height="62" rx="10" fill="#6b46c1" filter="url(#shadow)"/>
+  <text x="450" y="172" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">Amazon API Gateway</text>
+  <text x="450" y="190" text-anchor="middle" fill="#d6bcfa" font-size="10">GET /report → Lambda  |  /api/** → ECS Backend  |  /* → ECS Frontend</text>
+
+  <!-- ─── VPC border ─── -->
+  <rect x="30" y="245" width="840" height="295" rx="14" fill="rgba(246,173,85,0.06)" stroke="#f6ad55" stroke-width="2" stroke-dasharray="9,5"/>
+  <text x="52" y="264" font-size="11" fill="#b7791f" font-weight="700">VPC — Sub-redes privadas</text>
+
+  <!-- Seta API GW → Lambda -->
+  <line x1="340" y1="207" x2="185" y2="282" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="237" y="254" font-size="10" fill="#553c9a" font-weight="600">GET /report</text>
+
+  <!-- ─── Lambda ─── -->
+  <rect x="55" y="282" width="215" height="72" rx="10" fill="#dd6b20" filter="url(#shadow)"/>
+  <text x="162" y="310" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">AWS Lambda</text>
+  <text x="162" y="328" text-anchor="middle" fill="#feebc8" font-size="10">oms-report (Python 3.12)</text>
+  <text x="162" y="343" text-anchor="middle" fill="#feebc8" font-size="10">Gera relatório JSON de estatísticas</text>
+
+  <!-- Seta API GW → ECS Backend -->
+  <line x1="450" y1="207" x2="450" y2="282" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="457" y="250" font-size="10" fill="#2b6cb0" font-weight="600">/api/**</text>
+
+  <!-- ─── ECS Backend ─── -->
+  <rect x="325" y="282" width="250" height="72" rx="10" fill="#2b6cb0" filter="url(#shadow)"/>
+  <text x="450" y="310" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">ECS Fargate — Backend</text>
+  <text x="450" y="328" text-anchor="middle" fill="#bee3f8" font-size="10">Spring Boot 3.2 / Java 21</text>
+  <text x="450" y="343" text-anchor="middle" fill="#bee3f8" font-size="10">API REST :8080</text>
+
+  <!-- Seta API GW → ECS Frontend -->
+  <line x1="558" y1="207" x2="718" y2="282" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="658" y="252" font-size="10" fill="#285e61" font-weight="600">/*</text>
+
+  <!-- ─── ECS Frontend ─── -->
+  <rect x="620" y="282" width="225" height="72" rx="10" fill="#285e61" filter="url(#shadow)"/>
+  <text x="732" y="310" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">ECS Fargate — Frontend</text>
+  <text x="732" y="328" text-anchor="middle" fill="#b2f5ea" font-size="10">Nginx + HTML / CSS / JS</text>
+  <text x="732" y="343" text-anchor="middle" fill="#b2f5ea" font-size="10">Interface Web :80</text>
+
+  <!-- Seta Lambda → ECS Backend (HTTP interno) -->
+  <path d="M 270 340 Q 295 410 325 340" fill="none" stroke="#c05621" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#arrowOrange)"/>
+  <text x="278" y="402" font-size="9" fill="#c05621" font-weight="600">HTTP interno</text>
+
+  <!-- Seta ECS Backend → RDS -->
+  <line x1="450" y1="354" x2="450" y2="420" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ─── RDS ─── -->
+  <rect x="305" y="420" width="290" height="72" rx="10" fill="#276749" filter="url(#shadow)"/>
+  <text x="450" y="449" text-anchor="middle" fill="#fff" font-size="13" font-weight="600">Amazon RDS — PostgreSQL 16</text>
+  <text x="450" y="467" text-anchor="middle" fill="#9ae6b4" font-size="10">Sub-rede privada — porta 5432</text>
+  <text x="450" y="482" text-anchor="middle" fill="#9ae6b4" font-size="10">Sem acesso público à Internet</text>
+
+  <!-- ─── ECR (canto direito) ─── -->
+  <rect x="650" y="420" width="190" height="72" rx="10" fill="#553c9a" filter="url(#shadow)"/>
+  <text x="745" y="450" text-anchor="middle" fill="#fff" font-size="12" font-weight="600">Amazon ECR</text>
+  <text x="745" y="468" text-anchor="middle" fill="#d6bcfa" font-size="10">Repositório de imagens</text>
+  <text x="745" y="483" text-anchor="middle" fill="#d6bcfa" font-size="10">Docker (backend + frontend)</text>
+
+  <!-- ─── Legenda ─── -->
+  <rect x="30" y="553" width="840" height="36" rx="8" fill="#e2e8f0"/>
+  <rect x="50" y="563" width="12" height="12" fill="#6b46c1" rx="2"/>
+  <text x="68" y="573" font-size="10" fill="#4a5568">API Gateway</text>
+  <rect x="148" y="563" width="12" height="12" fill="#dd6b20" rx="2"/>
+  <text x="166" y="573" font-size="10" fill="#4a5568">Lambda</text>
+  <rect x="228" y="563" width="12" height="12" fill="#2b6cb0" rx="2"/>
+  <text x="246" y="573" font-size="10" fill="#4a5568">ECS Backend</text>
+  <rect x="338" y="563" width="12" height="12" fill="#285e61" rx="2"/>
+  <text x="356" y="573" font-size="10" fill="#4a5568">ECS Frontend</text>
+  <rect x="448" y="563" width="12" height="12" fill="#276749" rx="2"/>
+  <text x="466" y="573" font-size="10" fill="#4a5568">RDS PostgreSQL</text>
+  <rect x="568" y="563" width="12" height="12" fill="#553c9a" rx="2"/>
+  <text x="586" y="573" font-size="10" fill="#4a5568">ECR</text>
+  <line x1="625" y1="569" x2="650" y2="569" stroke="#c05621" stroke-width="1.8" stroke-dasharray="5,3"/>
+  <text x="656" y="573" font-size="10" fill="#4a5568">HTTP interno (Lambda → API)</text>
+  <line x1="790" y1="569" x2="815" y2="569" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="7,4"/>
+  <text x="820" y="573" font-size="10" fill="#4a5568">VPC</text>
+</svg>

@@ -2,6 +2,12 @@
 
 Sistema de gestão de pedidos cloud-native na AWS.
 
+## Diagrama da Arquitetura
+
+![Arquitetura AWS](docs/architecture.svg)
+
+> Fluxo: **Internet → API Gateway → Lambda** (rota `/report`) ou **→ ECS Fargate Backend** (rotas `/api/**`) ou **→ ECS Fargate Frontend** (interface web). O backend se conecta ao **RDS PostgreSQL** em sub-rede privada.
+
 ## Stack
 
 | Camada      | Tecnologia                        |
@@ -9,50 +15,69 @@ Sistema de gestão de pedidos cloud-native na AWS.
 | Backend     | Java 21 + Spring Boot 3.2         |
 | Frontend    | HTML / CSS / JavaScript (Nginx)   |
 | Banco       | PostgreSQL 16 (Amazon RDS)        |
-| Lambda      | Python 3.12 (boto3-free)          |
+| Lambda      | Python 3.12 (sem dependências externas) |
 | Contêineres | Docker + ECS Fargate              |
 | Gateway     | Amazon API Gateway                |
 
-## Arquitetura AWS
+## Rotas da API Gateway
 
-```
-Internet → API Gateway
-  ├── GET /report            → Lambda Python (stats)
-  ├── /api/customers/**      → ECS Fargate → RDS
-  ├── /api/orders/**         → ECS Fargate → RDS
-  ├── /api/dashboard/stats   → ECS Fargate → RDS
-  └── /                      → ECS Fargate (Nginx + frontend)
-```
+| Método | Rota                        | Destino                   |
+|--------|-----------------------------|---------------------------|
+| GET    | `/report`                   | Lambda `oms-report`       |
+| ANY    | `/api/customers/{proxy+}`   | ECS Fargate (backend)     |
+| ANY    | `/api/orders/{proxy+}`      | ECS Fargate (backend)     |
+| GET    | `/api/dashboard/stats`      | ECS Fargate (backend)     |
+| ANY    | `/{proxy+}`                 | ECS Fargate (frontend)    |
+
+## Endpoints CRUD
+
+### Clientes (`/api/customers`)
+| Método   | Rota                  | Descrição                |
+|----------|-----------------------|--------------------------|
+| GET      | `/api/customers`      | Listar todos             |
+| GET      | `/api/customers/{id}` | Buscar por ID            |
+| POST     | `/api/customers`      | Criar cliente            |
+| PUT      | `/api/customers/{id}` | Atualizar cliente        |
+| DELETE   | `/api/customers/{id}` | Remover cliente          |
+
+### Pedidos (`/api/orders`)
+| Método   | Rota                              | Descrição              |
+|----------|-----------------------------------|------------------------|
+| GET      | `/api/orders`                     | Listar todos           |
+| GET      | `/api/orders/{id}`                | Buscar por ID          |
+| POST     | `/api/orders`                     | Criar pedido           |
+| PUT      | `/api/orders/{id}/status`         | Atualizar status       |
+| POST     | `/api/orders/{id}/items`          | Adicionar item         |
+| DELETE   | `/api/orders/{id}/items/{itemId}` | Remover item           |
+| DELETE   | `/api/orders/{id}`                | Remover pedido         |
 
 ## Desenvolvimento local
 
 ### Pré-requisitos
 - Docker Desktop
-- Java 21 + Maven (opcional, para rodar sem Docker)
 
 ### Subir tudo com Docker Compose
 
 ```bash
-cd infrastructure
+cd infra
 docker-compose up --build
 ```
 
-Acesse `http://localhost` no browser.
-
+Acesse `http://localhost` no browser.  
 A API REST fica em `http://localhost:8080/api`.
+
+O script `infra/sql/init.sql` é executado automaticamente na primeira vez que o container do banco sobe.
 
 ### Testar a Lambda localmente
 
 ```bash
 cd lambda/report
-python handler.py
+API_BASE_URL=http://localhost:8080 python handler.py
 ```
-
-> Defina `API_BASE_URL=http://localhost:8080` antes de rodar se o backend estiver local.
 
 ## Deploy na AWS
 
-### 1. Build e push das imagens
+### 1. Build e push das imagens Docker
 
 ```bash
 # backend
@@ -68,16 +93,25 @@ docker tag oms-frontend:latest <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/oms-f
 docker push <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/oms-frontend:latest
 ```
 
-### 2. Registrar a task definition
+### 2. Criar banco de dados no RDS
+
+1. Criar instância **PostgreSQL 16** no RDS em **sub-rede privada** (sem acesso público).
+2. Executar o script de inicialização:
+
+```bash
+psql -h <RDS_ENDPOINT> -U omsuser -d omsdb -f infra/sql/init.sql
+```
+
+### 3. Registrar a task definition no ECS
 
 ```bash
 aws ecs register-task-definition \
-  --cli-input-json file://infrastructure/ecs-task-definition.json
+  --cli-input-json file://infra/ecs-task-definition.json
 ```
 
 Substitua os placeholders `<ACCOUNT_ID>`, `<REGION>`, `<RDS_ENDPOINT>` e `<CHANGE_ME>` antes de registrar.
 
-### 3. Lambda
+### 4. Deploy da Lambda
 
 ```bash
 cd lambda/report
@@ -91,30 +125,37 @@ aws lambda create-function \
   --environment Variables={API_BASE_URL=http://<ECS_ALB_DNS>}
 ```
 
-### 4. API Gateway — rotas
+### 5. Configurar API Gateway
 
-| Método | Rota                        | Destino           |
-|--------|-----------------------------|-------------------|
-| ANY    | /api/customers/{proxy+}     | ECS Fargate       |
-| ANY    | /api/orders/{proxy+}        | ECS Fargate       |
-| GET    | /api/dashboard/stats        | ECS Fargate       |
-| GET    | /report                     | Lambda oms-report |
+Crie um **REST API** no API Gateway com as seguintes integrações:
+
+| Método | Rota                      | Integração          |
+|--------|---------------------------|---------------------|
+| GET    | `/report`                 | Lambda `oms-report` |
+| ANY    | `/api/customers/{proxy+}` | HTTP Proxy → ALB    |
+| ANY    | `/api/orders/{proxy+}`    | HTTP Proxy → ALB    |
+| GET    | `/api/dashboard/stats`    | HTTP Proxy → ALB    |
+| ANY    | `/{proxy+}`               | HTTP Proxy → ALB    |
 
 ## Variáveis de ambiente
 
-| Variável      | Descrição                              |
-|---------------|----------------------------------------|
-| `DB_URL`      | JDBC URL do RDS PostgreSQL             |
-| `DB_USER`     | Usuário do banco                       |
-| `DB_PASSWORD` | Senha do banco                         |
-| `API_BASE_URL`| (Lambda) URL base da API no ECS/ALB   |
+| Variável       | Serviço         | Descrição                               |
+|----------------|-----------------|-----------------------------------------|
+| `DB_URL`       | Backend / ECS   | JDBC URL do RDS PostgreSQL              |
+| `DB_USER`      | Backend / ECS   | Usuário do banco                        |
+| `DB_PASSWORD`  | Backend / ECS   | Senha do banco                          |
+| `API_BASE_URL` | Lambda          | URL base da API no ECS (via ALB)        |
 
 ## Estrutura do projeto
 
 ```
 order-management-system/
-├── backend/        # Spring Boot (Java 21)
-├── frontend/       # HTML/CSS/JS + Nginx
-├── lambda/report/  # Python Lambda
-└── infrastructure/ # docker-compose + ECS task definition
+├── backend/          # Spring Boot (Java 21)
+├── frontend/         # HTML/CSS/JS + Nginx
+├── lambda/report/    # Função Lambda (Python 3.12)
+├── infra/            # docker-compose, ECS task definition, scripts SQL
+│   └── sql/
+│       └── init.sql  # Script de criação das tabelas
+└── docs/
+    └── architecture.svg  # Diagrama da arquitetura AWS
 ```

@@ -15,6 +15,7 @@
 </nav>
 <main>
     <h1>Dashboard</h1>
+
     <div class="cards" id="cards">
         <div class="card"><div class="label">Total de Pedidos</div><div class="value" id="totalOrders">–</div></div>
         <div class="card"><div class="label">Total de Clientes</div><div class="value" id="totalCustomers">–</div></div>
@@ -32,6 +33,12 @@
             </thead>
             <tbody id="statusTable"></tbody>
         </table>
+    </div>
+
+    <!-- Seção do Relatório Lambda -->
+    <div class="lambda-section">
+        <h2>Relatório <span class="badge-lambda">AWS Lambda</span></h2>
+        <div id="lambdaReport"><p class="lambda-error">Carregando relatório…</p></div>
     </div>
 </main>
 
